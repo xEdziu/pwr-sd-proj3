@@ -10,18 +10,16 @@ As part of the mini-projects, it is necessary to implement your own `Hash-Based 
 
 ## Requirements
 - `g++` compiler
-- `ncurses` library
-- `menu` library
 
 To install the required libraries, you need to run the following command in the terminal:
 ```bash
-sudo apt-get install libncurses5-dev libmenu-dev g++
+sudo apt-get install g++
 ```
 
 ## Compiling and running
 In order to compile the program, you need to run the following command in the main directory of the project:
 ```bash
-g++ -o main main.cpp -lncurses -lmenu -std=c++17
+g++ -o main main.cpp -std=c++17
 ```
 then you can run the program by executing the following command:
 ```bash
@@ -32,7 +30,7 @@ moreover, the program [cpplint](https://github.com/cpplint/cpplint) was used to 
 ```bash
 cpplint <filename>
 ```
-Make sure you have `cpplint` installed on your machine:
+Make sure you have `cpplint` (**Pythons pip package**) installed on your machine:
 ```bash
 pip install cpplint
 ```

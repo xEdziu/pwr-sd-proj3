@@ -3,37 +3,34 @@
 
 int main(int argc, char** argv) {
     OpenAddressing<int, std::string> ht =
-     OpenAddressing<int, std::string>(50);
-    ht.insert(1, "one");
-    ht.insert(2, "two");
-    ht.insert(3, "three");
-    ht.insert(4, "four");
-    ht.insert(5, "five");
-    ht.insert(6, "six");
-    ht.insert(7, "seven");
-    ht.insert(8, "eight");
-    ht.insert(9, "nine");
-    ht.insert(10, "ten");
+     OpenAddressing<int, std::string>(6);
+    ht.insert(9, "one");
+    ht.insert(10, "two");
+    ht.insert(14, "three");
+    ht.insert(21, "four");
+    ht.insert(26, "five");
     std::cout << "Load factor: " << ht.getLoadFactor() <<
     " for size: " << ht.size() << std::endl;
 
+    ht.print();
+
     try {
-        std::cout << "\n\nSearch for key 5: "
-        << ht.search(5) << std::endl;
+        std::cout << "\n\nSearch for key 9: "
+        << ht.search(9) << std::endl;
     } catch (const std::range_error& e) {
         std::cerr << e.what() << std::endl;
     }
 
     try {
-        std::cout << "\n\nRemove key 5\n";
-        ht.remove(5);
+        std::cout << "\n\nRemove key 9\n";
+        ht.remove(9);
     } catch (const std::range_error& e) {
         std::cerr << e.what() << std::endl;
     }
 
     try {
-        std::cout << "\n\nSearch for key 5: "
-        << ht.search(5) << std::endl;
+        std::cout << "\n\nSearch for key 9: "
+        << ht.search(9) << std::endl;
     } catch (const std::range_error& e) {
         std::cerr << e.what() << std::endl;
     }

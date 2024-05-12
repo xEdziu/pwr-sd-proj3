@@ -20,7 +20,7 @@ class OpenAddressing : public HashTable<K, V> {
         * @return hashed key
     */
     size_t hash(const K& key, int i) const {
-        return (std::hash<K>{}(key) + i) % tableSize;  // Linear probing
+        return (key + i) % tableSize;  // Linear probing
     }
 
     /*

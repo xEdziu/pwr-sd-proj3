@@ -3,7 +3,7 @@
 
 int main(int argc, char** argv) {
     OpenAddressing<int, std::string> ht =
-     OpenAddressing<int, std::string>(6);
+     OpenAddressing<int, std::string>(0, 7);
     ht.insert(9, "one");
     ht.insert(10, "two");
     ht.insert(14, "three");
@@ -34,6 +34,8 @@ int main(int argc, char** argv) {
     } catch (const std::range_error& e) {
         std::cerr << e.what() << std::endl;
     }
+
+    ht.print();
 
     return 0;
 }

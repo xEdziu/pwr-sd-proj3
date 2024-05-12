@@ -9,6 +9,7 @@ class OpenAddressing : public HashTable<K, V> {
     std::vector<std::pair<K, V>> table;
     size_t tableSize;
     size_t numElements;
+    int probingType;
 
     static constexpr K EMPTY_KEY = -1;
     static constexpr K DELETED_KEY = -2;
@@ -20,7 +21,19 @@ class OpenAddressing : public HashTable<K, V> {
         * @return hashed key
     */
     size_t hash(const K& key, int i) const {
-        return (key + i) % tableSize;  // Linear probing
+        const int C = 1;  // Adjust this value as needed
+        int hashOne = key % tableSize;
+        int hashTwo = (key * 2) % tableSize;
+        switch (probingType) {
+            case 0:
+                return (hashOne + i * C) % tableSize;  // Linear probing
+            case 1:
+                return (hashOne + i * i * C) % tableSize;  // Quadratic probing
+            case 2:
+                return (hashOne + i * hashTwo) % tableSize;  // Double hashing
+            default:
+                return (hashOne + i * C) % tableSize;  // Linear probing
+        }
     }
 
     /*
@@ -34,10 +47,12 @@ class OpenAddressing : public HashTable<K, V> {
  public:
     /*
         * Constructor
+        * @param probingType type of probing to use: 
+        * 0 for linear probing, 1 for quadratic probing, 2 for double hashing
         * @param size size of hash table
     */
-    explicit OpenAddressing(size_t size = 101) :
-     tableSize(size), numElements(0) {
+    explicit OpenAddressing(int probingType, size_t size = 101) :
+     probingType(probingType), tableSize(size), numElements(0) {
         table.resize(tableSize, {EMPTY_KEY, V{}});
     }
 
@@ -181,7 +196,8 @@ class OpenAddressing : public HashTable<K, V> {
                 && slot.first != DELETED_KEY) {
                 std::cout << "Key: " << slot.first <<
                     ", Value: " << slot.second << std::endl;
-            }
+            } else
+                std::cout << "Key: " << slot.first << std::endl;
         }
     }
 

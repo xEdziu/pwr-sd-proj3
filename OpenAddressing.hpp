@@ -73,6 +73,7 @@ class OpenAddressing : public HashTable<K, V> {
         int i = 0;
         size_t index;
         while (i < tableSize) {
+            index = hash(key, i);
             if (table[index].first == key)
                 return table[index].second;
             else if (table[index].first == EMPTY_KEY)

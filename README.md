@@ -30,7 +30,7 @@ then you can run the program by executing the following command:
 
 moreover, the program `cpplint` was used to check the code style, you can run it by executing the following command:
 ```bash
-cpplint main.cpp
+cpplint <filename>
 ```
 Make sure you have `cpplint` installed on your machine:
 ```bash

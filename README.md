@@ -28,7 +28,7 @@ then you can run the program by executing the following command:
 ./main
 ```
 
-moreover, the program `cpplint` was used to check the code style, you can run it by executing the following command:
+moreover, the program ![cpplint](https://github.com/cpplint/cpplint) was used to check the code style, you can run it by executing the following command:
 ```bash
 cpplint <filename>
 ```

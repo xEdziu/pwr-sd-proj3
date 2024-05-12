@@ -12,6 +12,7 @@ class HashTable {
     virtual bool empty() = 0;
     virtual void keys() = 0;
     virtual void values() = 0;
+    virtual float getLoadFactor() = 0;
     virtual void print() = 0;
     virtual ~HashTable() {}
 };

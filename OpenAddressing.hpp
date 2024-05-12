@@ -23,6 +23,14 @@ class OpenAddressing : public HashTable<K, V> {
         return (std::hash<K>{}(key) + i) % tableSize;  // Linear probing
     }
 
+    /*
+        * Calculate load factor of hash table
+        * @return load factor
+    */
+    float calculateLoadFactor() const {
+        return static_cast<float>(numElements) / static_cast<float>(tableSize);
+    }
+
  public:
     /*
         * Constructor
@@ -56,6 +64,25 @@ class OpenAddressing : public HashTable<K, V> {
     }
 
     /*
+        * Search for key in hash table
+        * @param key key to search for
+        * @return value associated with key
+        * @throws std::range_error if key not found
+    */
+    V search(const K& key) override {
+        int i = 0;
+        size_t index;
+        while (i < tableSize) {
+            if (table[index].first == key)
+                return table[index].second;
+            else if (table[index].first == EMPTY_KEY)
+                break;
+            ++i;
+        }
+        throw std::range_error("Key not found");
+    }
+
+    /*
         * Remove key from hash table
         * @param key key to remove
         * @throws std::range_error if key not found
@@ -75,6 +102,73 @@ class OpenAddressing : public HashTable<K, V> {
             ++i;
         }
         throw std::range_error("Key not found");
+    }
+
+    /*
+        * Check if key exists in hash table
+        * @param key key to check
+        * @return true if key exists, false otherwise
+    */
+    bool exists(const K& key) override {
+        int i = 0;
+        size_t index;
+        while (i < tableSize) {
+            index = hash(key, i);
+            if (table[index].first == key)
+                return true;
+            else if (table[index].first == EMPTY_KEY)
+                break;
+            ++i;
+        }
+        return false;
+    }
+
+    /*
+        * Get number of elements in hash table
+        * @return number of elements
+    */
+    size_t size() override {
+        return numElements;
+    }
+
+    /*
+        * Check if hash table is empty
+        * @return true if hash table is empty, false otherwise
+    */
+    bool empty() override {
+        return numElements == 0;
+    }
+
+    /*
+        * Print all keys in hash table
+    */
+    void keys() override {
+        for (const auto& slot : table) {
+            if (slot.first != EMPTY_KEY
+                && slot.first != DELETED_KEY) {
+                std::cout << slot.first << std::endl;
+            }
+        }
+    }
+
+    /*
+        * Print all values in hash table
+    */
+    void values() override {
+        for (const auto& slot : table) {
+            if (slot.first != EMPTY_KEY
+                && slot.first != DELETED_KEY) {
+                std::cout << slot.second << std::endl;
+            }
+        }
+    }
+
+    /*
+        * Get load factor of hash table
+        * @return load factor
+    */
+    float getLoadFactor() override {
+        return calculateLoadFactor();
     }
 
     /*

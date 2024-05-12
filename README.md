@@ -8,6 +8,17 @@ As part of the mini-projects, it is necessary to implement your own `Hash-Based 
 
 # Compiling and running (Linux)
 
+## Requirements
+- `g++` compiler
+- `ncurses` library
+- `menu` library
+
+To install the required libraries, you need to run the following command in the terminal:
+```bash
+sudo apt-get install libncurses5-dev libmenu-dev g++
+```
+
+## Compiling and running
 In order to compile the program, you need to run the following command in the main directory of the project:
 ```bash
 g++ -o main main.cpp -lncurses -lmenu -std=c++17

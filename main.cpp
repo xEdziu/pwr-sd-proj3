@@ -1,77 +1,147 @@
+#include <cstdlib>
 #include <iostream>
+#include <stdexcept>
+#include <utility>
+#include <fstream>
+#include <string>
+#include <filesystem>
+#include <chrono>
+
+#include "./OpenAddressing.hpp"
 #include "./ClosedAddressingWithBST.hpp"
+#include "./CuckooHashing.hpp"
 
-int main() {
-    // Create a hash table with size 10
-    ClosedAddressingWithBST<int, std::string> hashTable
-     = ClosedAddressingWithBST<int, std::string>(11);
+namespace fs = std::filesystem;
 
-    // Insert 10 key-value pairs
-    hashTable.insert(1, "One");
-    hashTable.insert(2, "Two");
-    hashTable.insert(3, "Three");
-    hashTable.insert(4, "Four");
-    std::cout << "Load factor after 4/11 inserts: " << hashTable.getLoadFactor() << "\n";
-    hashTable.insert(5, "Five");
-    hashTable.insert(6, "Six");
-    hashTable.insert(7, "Seven");
-    std::cout << "Load factor after 7/11 inserts: " << hashTable.getLoadFactor() << "\n";
-    hashTable.insert(8, "Eight");
-    hashTable.insert(9, "Nine");
-    hashTable.insert(10, "Ten");
-    std::cout << "Load factor after 10/11 inserts: " << hashTable.getLoadFactor() << "\n";
+int sizes[] = {100, 1000, 10000, 100000, 1000000};
+int dataSets[] = {1, 2, 3, 4, 5};
 
-    // Print the hash table
-    std::cout << "Hash table after insertion:\n";
-    hashTable.print();
+OpenAddressing<int, std::string> *openAddressing;
+ClosedAddressingWithBST<int, std::string> *closedAddressing;
+CuckooHashing<int, std::string> *cuckooHashing;
 
-    // Check if a key exists
-    std::cout << "Key 5 exists: " << (hashTable.exists(5) ? "Yes" : "No") << "\n";
+template <typename Structure>
+uint64_t performInsertion(Structure *structure, int key, std::string value) {
+    auto start = std::chrono::high_resolution_clock::now();
+    structure->insert(key, value);
+    auto end = std::chrono::high_resolution_clock::now();
+    return std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
+}
 
-    // Get the size of the hash table
-    std::cout << "Size of hash table: " << hashTable.size() << "\n";
+template <typename Structure>
+uint64_t performRemoval(Structure *structure, int key) {
+    auto start = std::chrono::high_resolution_clock::now();
+    structure->remove(key);
+    auto end = std::chrono::high_resolution_clock::now();
+    return std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
+}
 
-    // Check if the hash table is empty
-    std::cout << "Hash table is empty: " << (hashTable.empty() ? "Yes" : "No") << "\n";
-
-    // Search for a key
-    try {
-        std::cout << "Value for key 5: " << hashTable.search(5) << "\n";
-    } catch (const std::out_of_range& oor) {
-        std::cerr << "Key not found\n";
+template <typename Structure>
+int populateStructureAndReturnKeyToRemove(Structure *structure, std::string file) {
+    std::ifstream input(file);
+    std::string line;
+    while (std::getline(input, line)) {
+        int key = std::stoi(line.substr(0, line.find(" ")));
+        std::string value = line.substr(line.find(" ") + 1);
+        structure->insert(key, value);
     }
 
-    // Another 10 insertions
-    hashTable.insert(11, "Eleven");
-    hashTable.insert(12, "Twelve");
-    hashTable.insert(13, "Thirteen");
-    hashTable.insert(14, "Fourteen");
-    hashTable.insert(15, "Fifteen");
-    hashTable.insert(16, "Sixteen");
-    hashTable.insert(17, "Seventeen");
-    hashTable.insert(18, "Eighteen");
-    hashTable.insert(19, "Nineteen");
-    hashTable.insert(20, "Twenty");
+    bool found = false;
+    int tempKey = -5;
+    while (!found) {
+        tempKey = rand()%1000000 + 1;
+        found = structure->exists(tempKey);
+    }
+    return tempKey;
+}
 
-    // Print the hash table
-    std::cout << "Hash table after another 10 insertions:\n";
-    hashTable.print();
+int main() {
+    std::cout << "Starting structure testing...\n";
+    std::ofstream output("results.csv");
+    output << "action;structure;size;timeNs\n";
+    int line = 0;
 
-    std::cout << "\n\n\n\n" << std::endl;
+    int dataSets[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    int sizes[] = {1000, 2000, 4000, 8000, 16000, 32000, 64000, 128000, 256000, 512000};
 
-        // Create a hash table with size 10
-    ClosedAddressingWithBST<int, std::string> secondHashTable
-     = ClosedAddressingWithBST<int, std::string>(5);
+    auto mainStart = std::chrono::high_resolution_clock::now();
 
-    // Insert key-value pairs into the hash table
-    secondHashTable.insert(1, "one");
-    secondHashTable.insert(3, "three");
-    secondHashTable.insert(4, "four");
-    secondHashTable.insert(5, "five");
-    secondHashTable.insert(6, "six");
-    secondHashTable.insert(8, "eight");
+    // Open Addressing, Insertion and Deletion
+    for (int probingType = 0; probingType < 3; probingType++) {
+        std::cout << "Open Addressing, probing type: " << probingType << "\n";
+        for (int size : sizes){
+            uint64_t timeInsert = 0;
+            uint64_t timeRemove = 0;
+            for (int set : dataSets) {
+                std::string filename = "./data/zbior_" + std::to_string(set) + "_rozmiar_" + std::to_string(size) + ".txt";
+                int keyToRemove;
+                std::cout << "Open Addressing, probing type: " << probingType << ", size: " << size << ", set: " << set << "\n";
+                for (int j = 1; j <= 100; j++){
+                    openAddressing = new OpenAddressing<int, std::string>(probingType, size);
+                    keyToRemove = populateStructureAndReturnKeyToRemove(openAddressing, filename);
+                    timeInsert += performInsertion(openAddressing, j, "test");
+                    delete openAddressing;
+                    openAddressing = new OpenAddressing<int, std::string>(probingType, size);
+                    keyToRemove = populateStructureAndReturnKeyToRemove(openAddressing, filename);
+                    timeRemove += performRemoval(openAddressing, keyToRemove);
+                    delete openAddressing;
+                }
+            }
+            output << "insert;openAddressingProbingType"<< probingType << ";" << size << ";" << timeInsert / 1000 << "\n";
+            output << "remove;openAddressingProbingType"<< probingType << ";" << size << ";" << timeRemove / 1000 << "\n";
+        }
+    }
 
-    secondHashTable.print();
+    // Closed Addressing, Insertion and Deletion
+    for (int size : sizes){
+        uint64_t timeInsert = 0;
+        uint64_t timeRemove = 0;
+        for (int set : dataSets) {
+            std::string filename = "./data/zbior_" + std::to_string(set) + "_rozmiar_" + std::to_string(size) + ".txt";
+            int keyToRemove;
+            std::cout << "Closed Addressing, size: " << size << ", set: " << set << "\n";
+            for (int j = 1; j <= 100; j++){
+                closedAddressing = new ClosedAddressingWithBST<int, std::string>(size);
+                keyToRemove = populateStructureAndReturnKeyToRemove(closedAddressing, filename);
+                timeInsert += performInsertion(closedAddressing, j, "test");
+                delete closedAddressing;
+                closedAddressing = new ClosedAddressingWithBST<int, std::string>(size);
+                keyToRemove = populateStructureAndReturnKeyToRemove(closedAddressing, filename);
+                timeRemove += performRemoval(closedAddressing, keyToRemove);
+                delete closedAddressing;
+            }
+        }
+        output << "insert;closedAddressing;" << size << ";" << timeInsert / 1000 << "\n";
+        output << "remove;closedAddressing;" << size << ";" << timeRemove / 1000 << "\n";
+    }
+
+    // Cuckoo Hashing, Insertion and Deletion
+    for (int size : sizes){
+        uint64_t timeInsert = 0;
+        uint64_t timeRemove = 0;
+        for (int set : dataSets) {
+            std::string filename = "./data/zbior_" + std::to_string(set) + "_rozmiar_" + std::to_string(size) + ".txt";
+            int keyToRemove;
+            std::cout << "Cuckoo Hashing, size: " << size << ", set: " << set << "\n";
+            for (int j = 1; j <= 100; j++){
+                cuckooHashing = new CuckooHashing<int, std::string>(size);
+                keyToRemove = populateStructureAndReturnKeyToRemove(cuckooHashing, filename);
+                timeInsert += performInsertion(cuckooHashing, j, "test");
+                delete cuckooHashing;
+                cuckooHashing = new CuckooHashing<int, std::string>(size);
+                keyToRemove = populateStructureAndReturnKeyToRemove(cuckooHashing, filename);
+                timeRemove += performRemoval(cuckooHashing, keyToRemove);
+                delete cuckooHashing;
+            }
+        }
+        output << "insert;cuckooHashing;" << size << ";" << timeInsert / 1000 << "\n";
+        output << "remove;cuckooHashing;" << size << ";" << timeRemove / 1000 << "\n";
+    }
+
+    auto mainEnd = std::chrono::high_resolution_clock::now();
+
+    std::cout << "Structure testing finished\n";
+    std::cout << "Total time: " << std::chrono::duration_cast<std::chrono::minutes>(mainEnd - mainStart).count() << "s\n";
 
     return 0;
 }

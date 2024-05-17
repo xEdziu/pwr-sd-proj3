@@ -78,7 +78,7 @@ int main() {
                     openAddressing = new OpenAddressing<int, std::string>(probingType, size);
                     keyToRemove = populateStructureAndReturnKeyToRemove(openAddressing, filename);
                     std::cout << "OPEN_ADDRESSING | Performing insertion for size: " << size << ", set: " << set << "\n";
-                    timeInsert += performInsertion(openAddressing, j, "test");
+                    timeInsert += performInsertion(openAddressing, rand()%1000000 + 1, "test");
                     delete openAddressing;
                     openAddressing = new OpenAddressing<int, std::string>(probingType, size);
                     keyToRemove = populateStructureAndReturnKeyToRemove(openAddressing, filename);
@@ -104,7 +104,7 @@ int main() {
                 closedAddressing = new ClosedAddressingWithBST<int, std::string>(size);
                 keyToRemove = populateStructureAndReturnKeyToRemove(closedAddressing, filename);
                 std::cout << "CLOSED_ADDRESSING | Performing insertion for size: " << size << ", set: " << set << "\n";
-                timeInsert += performInsertion(closedAddressing, j, "test");
+                timeInsert += performInsertion(closedAddressing, rand()%1000000 + 1, "test");
                 delete closedAddressing;
                 closedAddressing = new ClosedAddressingWithBST<int, std::string>(size);
                 keyToRemove = populateStructureAndReturnKeyToRemove(closedAddressing, filename);
@@ -129,7 +129,7 @@ int main() {
                 cuckooHashing = new CuckooHashing<int, std::string>(size);
                 keyToRemove = populateStructureAndReturnKeyToRemove(cuckooHashing, filename);
                 std::cout << "CUCKOO_HASHING | Performing insertion for size: " << size << ", set: " << set << "\n";
-                timeInsert += performInsertion(cuckooHashing, j, "test");
+                timeInsert += performInsertion(cuckooHashing, rand()%1000000 + 1, "test");
                 delete cuckooHashing;
                 cuckooHashing = new CuckooHashing<int, std::string>(size);
                 keyToRemove = populateStructureAndReturnKeyToRemove(cuckooHashing, filename);

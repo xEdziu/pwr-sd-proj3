@@ -1,36 +1,51 @@
 #include <iostream>
-#include <string>
-#include "./CuckooHashing.hpp"
+#include "./BST.hpp"
 
 int main() {
-    CuckooHashing<int, std::string> ht = CuckooHashing<int, std::string>(7);
-    ht.insert(9, "one");
-    ht.insert(10, "two");
-    ht.insert(14, "three");
-    ht.insert(21, "four");
-    ht.insert(26, "five");
+    BST<int, std::string> bst;
 
-    std::cout << "Load factor: " << ht.getLoadFactor() << " for size: " << ht.size() << std::endl;
+    std::cout << "Inserting elements...\n";
+    bst.insert(50, "apple");
+    bst.insert(30, "banana");
+    bst.insert(20, "cherry");
+    bst.insert(40, "date");
+    bst.insert(70, "elderberry");
+    bst.insert(60, "fig");
+    bst.insert(80, "grape");
+    bst.print();
 
-    ht.insert(31, "six");
-
-    std::cout << "Added 31: " << ht.search(31) << std::endl;
-
-    try {
-        ht.remove(31);
+    std::cout << "\nSearching for elements...\n";
+    try{
+        std::cout << "Key 30: " << bst.search(30) << "\n";
     } catch (const std::out_of_range& oor) {
-        std::cerr << "Out of range error: " << oor.what() << std::endl;
+        std::cerr << "Key 30 not found\n";
     }
 
-    std::cout << "Deleted 31" << std::endl;
-
     try {
-        std::cout << "Search 31: " << ht.search(31) << std::endl;
+        std::cout << "Key 70: " << bst.search(70) << "\n";
     } catch (const std::out_of_range& oor) {
-        std::cerr << "Out of range error: " << oor.what() << std::endl;
+        std::cerr << "Key 70 not found\n";
+    }
+    
+    std::cout << "\nRemoving some elements...\n";
+    bst.remove(20);
+    bst.remove(70);
+    bst.print();
+
+    std::cout << "\nSearching for element 70 again...\n";
+    try {
+        std::cout << "Key 70: " << bst.search(70) << "\n";
+    } catch (const std::out_of_range& oor) {
+        std::cerr << "Key 70 not found\n";
     }
 
-    ht.print();
+    std::cout << "\nIn-order traversal...\n";
+    bst.inorder([](BSTNode<int, std::string>* node) {
+        std::cout << "Key: " << node->key << ", Value: " << node->value << "\n";
+    });
+
+    std::cout << "\nFinal state of the tree:\n";
+    bst.print();
 
     return 0;
 }

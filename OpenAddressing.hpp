@@ -1,12 +1,11 @@
 #pragma once
-#include <vector>
 #include <utility>  // for std::pair
 #include "./HashTable.hpp"
 
 template <typename K, typename V>
 class OpenAddressing : public HashTable<K, V> {
  private:
-    std::vector<std::pair<K, V>> table;
+    std::pair<K, V>* table;
     size_t tableSize;
     size_t numElements;
     int probingType;
@@ -53,7 +52,10 @@ class OpenAddressing : public HashTable<K, V> {
     */
     explicit OpenAddressing(int probingType, size_t size = 101) :
      probingType(probingType), tableSize(size), numElements(0) {
-        table.resize(tableSize, {EMPTY_KEY, V{}});
+        table = new std::pair<K, V>[tableSize];
+        for (size_t i = 0; i < tableSize; ++i) {
+            table[i].first = EMPTY_KEY;
+        }
     }
 
     /*
@@ -159,10 +161,10 @@ class OpenAddressing : public HashTable<K, V> {
         * Print all keys in hash table
     */
     void keys() override {
-        for (const auto& slot : table) {
-            if (slot.first != EMPTY_KEY
-                && slot.first != DELETED_KEY) {
-                std::cout << slot.first << std::endl;
+        for (size_t i = 0; i < tableSize; ++i) {
+            if (table[i].first != EMPTY_KEY
+                && table[i].first != DELETED_KEY) {
+                std::cout << table[i].first << std::endl;
             }
         }
     }
@@ -171,10 +173,10 @@ class OpenAddressing : public HashTable<K, V> {
         * Print all values in hash table
     */
     void values() override {
-        for (const auto& slot : table) {
-            if (slot.first != EMPTY_KEY
-                && slot.first != DELETED_KEY) {
-                std::cout << slot.second << std::endl;
+        for (size_t i = 0; i < tableSize; ++i) {
+            if (table[i].first != EMPTY_KEY
+                && table[i].first != DELETED_KEY) {
+                std::cout << table[i].second << std::endl;
             }
         }
     }
@@ -191,18 +193,21 @@ class OpenAddressing : public HashTable<K, V> {
         * Print all key-value pairs in hash table
     */
     void print() override {
-        for (const auto& slot : table) {
-            if (slot.first != EMPTY_KEY
-                && slot.first != DELETED_KEY) {
-                std::cout << "Key: " << slot.first <<
-                    ", Value: " << slot.second << std::endl;
-            } else
-                std::cout << "Key: " << slot.first << std::endl;
+        for (size_t i = 0; i < tableSize; ++i) {
+            if (table[i].first != EMPTY_KEY
+             && table[i].first != DELETED_KEY) {
+                std::cout << "Key: " << table[i].first <<
+                 ", Value: " << table[i].second << std::endl;
+            } else {
+                std::cout << "Key: " << table[i].first << std::endl;
+            }
         }
     }
 
     /*
         * Destructor
     */
-    ~OpenAddressing() override = default;
+    ~OpenAddressing() override {
+        delete[] table;
+    }
 };

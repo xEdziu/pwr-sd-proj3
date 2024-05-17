@@ -88,7 +88,9 @@ int main() {
                 }
             }
             output << "insert;openAddressingProbingType"<< probingType << ";" << size << ";" << timeInsert / 1000 << "\n";
+            std::cout << "OPEN_ADDRESSING | Insertion time for probing type " << probingType << " and size " << size << ": " << timeInsert / 1000 << " ns\n";
             output << "remove;openAddressingProbingType"<< probingType << ";" << size << ";" << timeRemove / 1000 << "\n";
+            std::cout << "OPEN_ADDRESSING | Removal time for probing type " << probingType << " and size " << size << ": " << timeRemove / 1000 << " ns\n";
         }
     }
 
@@ -114,7 +116,9 @@ int main() {
             }
         }
         output << "insert;closedAddressing;" << size << ";" << timeInsert / 1000 << "\n";
+        std::cout << "CLOSED_ADDRESSING | Insertion time for size " << size << ": " << timeInsert / 1000 << " ns\n";
         output << "remove;closedAddressing;" << size << ";" << timeRemove / 1000 << "\n";
+        std::cout << "CLOSED_ADDRESSING | Removal time for size " << size << ": " << timeRemove / 1000 << " ns\n";
     }
 
     // Cuckoo Hashing, Insertion and Deletion
@@ -139,7 +143,9 @@ int main() {
             }
         }
         output << "insert;cuckooHashing;" << size << ";" << timeInsert / 1000 << "\n";
+        std::cout << "CUCKOO_HASHING | Insertion time for size " << size << ": " << timeInsert / 1000 << " ns\n";
         output << "remove;cuckooHashing;" << size << ";" << timeRemove / 1000 << "\n";
+        std::cout << "CUCKOO_HASHING | Removal time for size " << size << ": " << timeRemove / 1000 << " ns\n";
     }
 
     auto mainEnd = std::chrono::high_resolution_clock::now();

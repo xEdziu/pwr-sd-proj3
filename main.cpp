@@ -13,9 +13,6 @@
 
 namespace fs = std::filesystem;
 
-int sizes[] = {100, 1000, 10000, 100000, 1000000};
-int dataSets[] = {1, 2, 3, 4, 5};
-
 OpenAddressing<int, std::string> *openAddressing;
 ClosedAddressingWithBST<int, std::string> *closedAddressing;
 CuckooHashing<int, std::string> *cuckooHashing;
@@ -40,12 +37,13 @@ template <typename Structure>
 int populateStructureAndReturnKeyToRemove(Structure *structure, std::string file) {
     std::ifstream input(file);
     std::string line;
+    std::cout << "Populating structure with data from " << file << "\n";
     while (std::getline(input, line)) {
         int key = std::stoi(line.substr(0, line.find(" ")));
         std::string value = line.substr(line.find(" ") + 1);
         structure->insert(key, value);
     }
-
+    std::cout << "Structure populated\n";
     bool found = false;
     int tempKey = -5;
     while (!found) {
@@ -79,10 +77,12 @@ int main() {
                 for (int j = 1; j <= 100; j++){
                     openAddressing = new OpenAddressing<int, std::string>(probingType, size);
                     keyToRemove = populateStructureAndReturnKeyToRemove(openAddressing, filename);
+                    std::cout << "OPEN_ADDRESSING | Performing insertion for size: " << size << ", set: " << set << "\n";
                     timeInsert += performInsertion(openAddressing, j, "test");
                     delete openAddressing;
                     openAddressing = new OpenAddressing<int, std::string>(probingType, size);
                     keyToRemove = populateStructureAndReturnKeyToRemove(openAddressing, filename);
+                    std::cout << "OPEN_ADDRESSING | Performing removal for size: " << size << ", set: " << set << "\n";
                     timeRemove += performRemoval(openAddressing, keyToRemove);
                     delete openAddressing;
                 }
@@ -103,10 +103,12 @@ int main() {
             for (int j = 1; j <= 100; j++){
                 closedAddressing = new ClosedAddressingWithBST<int, std::string>(size);
                 keyToRemove = populateStructureAndReturnKeyToRemove(closedAddressing, filename);
+                std::cout << "CLOSED_ADDRESSING | Performing insertion for size: " << size << ", set: " << set << "\n";
                 timeInsert += performInsertion(closedAddressing, j, "test");
                 delete closedAddressing;
                 closedAddressing = new ClosedAddressingWithBST<int, std::string>(size);
                 keyToRemove = populateStructureAndReturnKeyToRemove(closedAddressing, filename);
+                std::cout << "CLOSED_ADDRESSING | Performing removal for size: " << size << ", set: " << set << "\n";
                 timeRemove += performRemoval(closedAddressing, keyToRemove);
                 delete closedAddressing;
             }
@@ -126,10 +128,12 @@ int main() {
             for (int j = 1; j <= 100; j++){
                 cuckooHashing = new CuckooHashing<int, std::string>(size);
                 keyToRemove = populateStructureAndReturnKeyToRemove(cuckooHashing, filename);
+                std::cout << "CUCKOO_HASHING | Performing insertion for size: " << size << ", set: " << set << "\n";
                 timeInsert += performInsertion(cuckooHashing, j, "test");
                 delete cuckooHashing;
                 cuckooHashing = new CuckooHashing<int, std::string>(size);
                 keyToRemove = populateStructureAndReturnKeyToRemove(cuckooHashing, filename);
+                std::cout << "CUCKOO_HASHING | Performing removal for size: " << size << ", set: " << set << "\n";
                 timeRemove += performRemoval(cuckooHashing, keyToRemove);
                 delete cuckooHashing;
             }

@@ -1,38 +1,33 @@
 #include <iostream>
-#include "./OpenAddressing.hpp"
+#include <string>
+#include "./CuckooHashing.hpp"
 
-int main(int argc, char** argv) {
-    OpenAddressing<int, std::string> ht =
-     OpenAddressing<int, std::string>(0, 7);
+int main() {
+    CuckooHashing<int, std::string> ht = CuckooHashing<int, std::string>(7);
     ht.insert(9, "one");
     ht.insert(10, "two");
     ht.insert(14, "three");
     ht.insert(21, "four");
     ht.insert(26, "five");
-    std::cout << "Load factor: " << ht.getLoadFactor() <<
-    " for size: " << ht.size() << std::endl;
 
-    ht.print();
+    std::cout << "Load factor: " << ht.getLoadFactor() << " for size: " << ht.size() << std::endl;
+
+    ht.insert(31, "six");
+
+    std::cout << "Added 31: " << ht.search(31) << std::endl;
 
     try {
-        std::cout << "\n\nSearch for key 9: "
-        << ht.search(9) << std::endl;
-    } catch (const std::range_error& e) {
-        std::cerr << e.what() << std::endl;
+        ht.remove(31);
+    } catch (const std::out_of_range& oor) {
+        std::cerr << "Out of range error: " << oor.what() << std::endl;
     }
 
-    try {
-        std::cout << "\n\nRemove key 9\n";
-        ht.remove(9);
-    } catch (const std::range_error& e) {
-        std::cerr << e.what() << std::endl;
-    }
+    std::cout << "Deleted 31" << std::endl;
 
     try {
-        std::cout << "\n\nSearch for key 9: "
-        << ht.search(9) << std::endl;
-    } catch (const std::range_error& e) {
-        std::cerr << e.what() << std::endl;
+        std::cout << "Search 31: " << ht.search(31) << std::endl;
+    } catch (const std::out_of_range& oor) {
+        std::cerr << "Out of range error: " << oor.what() << std::endl;
     }
 
     ht.print();

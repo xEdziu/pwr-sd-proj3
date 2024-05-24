@@ -19,28 +19,17 @@ CuckooHashing<int, std::string> *cuckooHashing;
 
 template <typename Structure>
 uint64_t performInsertion(Structure *structure, int key, std::string value) {
-    try {
-        auto start = std::chrono::high_resolution_clock::now();
-        structure->insert(key, value);
-        auto end = std::chrono::high_resolution_clock::now();
-        auto time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
+    auto start = std::chrono::high_resolution_clock::now();
+    structure->insert(key, value);
+    auto end = std::chrono::high_resolution_clock::now();
+    auto time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
             
-        std::cout << " Time: " << time << "ns\n";
-        return time;
-    } catch (std::overflow_error e) {
-        throw e;
-    }
-
+    std::cout << " Time: " << time << "ns\n";
+    return time;
 }
 
 template <typename Structure>
 uint64_t performRemoval(Structure *structure, int key) {
-    try {
-        structure->exists(key);
-    } catch (std::range_error e) {
-        std::cout << "Key not found\n";
-        throw e;
-    }
     auto start = std::chrono::high_resolution_clock::now();
     structure->remove(key);
     auto end = std::chrono::high_resolution_clock::now();

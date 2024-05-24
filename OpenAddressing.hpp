@@ -59,6 +59,20 @@ class OpenAddressing : public HashTable<K, V> {
     }
 
     /*
+        * Copy constructor
+        * @param other OpenAddressing object to copy
+    */
+    OpenAddressing(const OpenAddressing& other) {
+        probingType = other.probingType;
+        tableSize = other.tableSize;
+        numElements = other.numElements;
+        table = new std::pair<K, V>[tableSize];
+        for (size_t i = 0; i < tableSize; ++i) {
+            table[i] = other.table[i];
+        }
+    }
+
+    /*
         * Insert key-value pair into hash table
         * @param key key to insert
         * @param value value to insert

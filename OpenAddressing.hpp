@@ -90,6 +90,8 @@ class OpenAddressing : public HashTable<K, V> {
                 return;
             }
             ++i;
+            if (i >= tableSize)
+                i %= tableSize;
         } while (i < tableSize);
         throw std::overflow_error("HashTable is full");
     }

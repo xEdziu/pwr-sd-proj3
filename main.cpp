@@ -61,7 +61,7 @@ int populateStructureAndReturnKeyToRemove(Structure *structure, std::string file
 int main() {
     std::cout << "Starting structure testing...\n";
     std::ofstream output("results.csv");
-    output << "action;structure;size;timeNs;missed\n";
+    output << "action;structure;size;timeNs\n";
     int line = 0;
 
     int dataSets[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
@@ -93,9 +93,9 @@ int main() {
                 }
                 delete openAddressing;
             }
-            output << "insert;openAddressingProbingType"<< probingType << ";" << size << ";" << timeInsert / 1000 << ";-1\n";
+            output << "insert;openAddressingProbingType"<< probingType << ";" << size << ";" << timeInsert / 1000 << "\n";
             std::cout << "OPEN_ADDRESSING | Insertion time for probing type " << probingType << " and size " << size << ": " << timeInsert / 1000 << " ns\n";
-            output << "remove;openAddressingProbingType"<< probingType << ";" << size << ";" << timeRemove / 1000 << ";-1\n";
+            output << "remove;openAddressingProbingType"<< probingType << ";" << size << ";" << timeRemove / 1000 << "\n";
             std::cout << "OPEN_ADDRESSING | Removal time for probing type " << probingType << " and size " << size << ": " << timeRemove / 1000 << " ns\n";
         }
     }
@@ -121,9 +121,9 @@ int main() {
                 delete closedAddressing;
             }
         }
-        output << "insert;closedAddressing;" << size << ";" << timeInsert / 1000 << ";-1\n";
+        output << "insert;closedAddressing;" << size << ";" << timeInsert / 1000 << "\n";
         std::cout << "CLOSED_ADDRESSING | Insertion time for size " << size << ": " << timeInsert / 1000 << " ns\n";
-        output << "remove;closedAddressing;" << size << ";" << timeRemove / 1000 << ";-1\n";
+        output << "remove;closedAddressing;" << size << ";" << timeRemove / 1000 << "\n";
         std::cout << "CLOSED_ADDRESSING | Removal time for size " << size << ": " << timeRemove / 1000 << " ns\n";
     }
 

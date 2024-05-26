@@ -99,12 +99,9 @@ class CuckooHashing : public HashTable<K, V> {
     * @param: V value
     */
     void insert(const K& key, const V& value) override {
-        std::cout << "INSIDE FUNC | Inserting key: " << key << " with value: " << value;
         if (!insertHelper(key, value, 0)) {
-            std::cout << "ERROR | Failed to insert key: " << key << " with value: " << value << std::endl;
             throw std::overflow_error("HashTable is full");
         }
-        std::cout << "SUCCESS | Inserted key: " << key << " with value: " << value << std::endl;
         ++size_;
     }
 

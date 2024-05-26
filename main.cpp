@@ -86,7 +86,6 @@ int main() {
                     timeInsert += performInsertion(copy, rand()%1000000 + 1, "test");
                     delete copy;
                     OpenAddressing<int, std::string> *copyRemove = new OpenAddressing<int, std::string>(*openAddressing);
-                    copyRemove = new OpenAddressing<int, std::string>(*openAddressing);
                     std::cout << "OPEN_ADDRESSING | Performing removal for size: " << size << ", set: " << set;
                     timeRemove += performRemoval(copyRemove, keyToRemove);
                     delete copyRemove;

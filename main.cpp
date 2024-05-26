@@ -110,12 +110,12 @@ int main() {
             for (int j = 1; j <= 100; j++){
                 closedAddressing = new ClosedAddressingWithBST<int, std::string>(size*2);
                 keyToRemove = populateStructureAndReturnKeyToRemove(closedAddressing, filename);
-                std::cout << "CLOSED_ADDRESSING | Performing insert for size: " << size << ", set: " << set << "\n";
+                std::cout << "CLOSED_ADDRESSING | Performing insert for size: " << size << ", set: " << set;
                 timeInsert += performInsertion(closedAddressing, rand()%1000000 + 1, "test");
                 delete closedAddressing;
                 closedAddressing = new ClosedAddressingWithBST<int, std::string>(size*2);
                 keyToRemove = populateStructureAndReturnKeyToRemove(closedAddressing, filename);
-                std::cout << "CLOSED_ADDRESSING | Performing remove for size: " << size << ", set: " << set << "\n";
+                std::cout << "CLOSED_ADDRESSING | Performing remove for size: " << size << ", set: " << set;
                 timeRemove += performRemoval(closedAddressing, keyToRemove);
                 delete closedAddressing;
             }
@@ -132,20 +132,20 @@ int main() {
         uint64_t timeRemove = 0;
         for (int set : dataSets) {
             std::string filename = "./data/zbior_" + std::to_string(set) + "_" + std::to_string(size) + ".txt";
-            int keyToRemove;
             std::cout << "Cuckoo Hashing, size: " << size << ", set: " << set << "\n";
+            cuckooHashing = new CuckooHashing<int, std::string>(size*2);
+            int keyToRemove = populateStructureAndReturnKeyToRemove(cuckooHashing, filename);
             for (int j = 1; j <= 100; j++){
-                cuckooHashing = new CuckooHashing<int, std::string>(size*2);
-                keyToRemove = populateStructureAndReturnKeyToRemove(cuckooHashing, filename);
-                std::cout << "CUCKOO_HASHING | Performing insertion for size: " << size << ", set: " << set << "\n";
-                timeInsert += performInsertion(cuckooHashing, rand()%1000000 + 1, "test");
-                delete cuckooHashing;
-                cuckooHashing = new CuckooHashing<int, std::string>(size*2);
-                keyToRemove = populateStructureAndReturnKeyToRemove(cuckooHashing, filename);
-                std::cout << "CUCKOO_HASHING | Performing removal for size: " << size << ", set: " << set << "\n";
-                timeRemove += performRemoval(cuckooHashing, keyToRemove);
-                delete cuckooHashing;
+                CuckooHashing<int, std::string> *copy = new CuckooHashing<int, std::string>(*cuckooHashing);
+                std::cout << "CUCKOO_HASHING | Performing insertion for size: " << size << ", set: " << set;
+                timeInsert += performInsertion(copy, rand()%1000000 + 1, "test");
+                delete copy;
+                CuckooHashing<int, std::string> *copyRemove = new CuckooHashing<int, std::string>(*cuckooHashing);
+                std::cout << "CUCKOO_HASHING | Performing removal for size: " << size << ", set: " << set;
+                timeRemove += performRemoval(copyRemove, keyToRemove);
+                delete copyRemove;
             }
+            delete cuckooHashing;
         }
         output << "insert;cuckooHashing;" << size << ";" << timeInsert / 1000 << "\n";
         std::cout << "CUCKOO_HASHING | Insertion time for size " << size << ": " << timeInsert / 1000 << " ns\n";

@@ -86,6 +86,21 @@ class CuckooHashing : public HashTable<K, V> {
     }
 
     /*
+    * Copy constructor
+    * @param: CuckooHashing object to copy
+    */
+    CuckooHashing(const CuckooHashing& other) {
+        tableSize = other.tableSize;
+        size_ = other.size_;
+        table1 = new std::pair<K, V>[tableSize];
+        table2 = new std::pair<K, V>[tableSize];
+        for (size_t i = 0; i < tableSize; ++i) {
+            table1[i] = other.table1[i];
+            table2[i] = other.table2[i];
+        }
+    }
+
+    /*
     * Return load factor of the hash table
     * @return float
     */

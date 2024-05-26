@@ -43,10 +43,13 @@ int populateStructureAndReturnKeyToRemove(Structure *structure, std::string file
     std::ifstream input(file);
     std::string line;
     std::cout << "Populating structure with data from " << file << "\n";
+    int licznik = 0;
     while (std::getline(input, line)) {
         int key = std::stoi(line.substr(0, line.find(" ")));
         std::string value = line.substr(line.find(" ") + 1);
         structure->insert(key, value);
+        std::cout << "\n" << licznik << ". Inserted key: " << key << " with value: " << value << "\n";
+        licznik++;
     }
     std::cout << "Structure populated\n";
     bool found = false;
@@ -69,63 +72,63 @@ int main() {
 
     auto mainStart = std::chrono::high_resolution_clock::now();
 
-    // Open Addressing, Insertion and Deletion
-    for (int probingType = 0; probingType < 3; probingType++) {
-        std::cout << "Open Addressing, probing type: " << probingType << "\n";
-        for (int size : sizes){
-            uint64_t timeInsert = 0;
-            uint64_t timeRemove = 0;
-            for (int set : dataSets) {
-                std::string filename = "./data/zbior_" + std::to_string(set) + "_" + std::to_string(size) + ".txt";
-                openAddressing = new OpenAddressing<int, std::string>(probingType, size*2);
-                int keyToRemove = populateStructureAndReturnKeyToRemove(openAddressing, filename);
-                std::cout << "Open Addressing, probing type: " << probingType << ", size: " << size << ", set: " << set << "\n";
-                for (int j = 1; j <= 100; j++){
-                    OpenAddressing<int, std::string> *copy = new OpenAddressing<int, std::string>(*openAddressing);
-                    std::cout << "OPEN_ADDRESSING | Performing insertion for size: " << size << ", set: " << set;
-                    timeInsert += performInsertion(copy, rand()%1000000 + 1, "test");
-                    delete copy;
-                    OpenAddressing<int, std::string> *copyRemove = new OpenAddressing<int, std::string>(*openAddressing);
-                    copyRemove = new OpenAddressing<int, std::string>(*openAddressing);
-                    std::cout << "OPEN_ADDRESSING | Performing removal for size: " << size << ", set: " << set;
-                    timeRemove += performRemoval(copyRemove, keyToRemove);
-                    delete copyRemove;
-                }
-                delete openAddressing;
-            }
-            output << "insert;openAddressingProbingType"<< probingType << ";" << size << ";" << timeInsert / 1000 << ";-1\n";
-            std::cout << "OPEN_ADDRESSING | Insertion time for probing type " << probingType << " and size " << size << ": " << timeInsert / 1000 << " ns\n";
-            output << "remove;openAddressingProbingType"<< probingType << ";" << size << ";" << timeRemove / 1000 << ";-1\n";
-            std::cout << "OPEN_ADDRESSING | Removal time for probing type " << probingType << " and size " << size << ": " << timeRemove / 1000 << " ns\n";
-        }
-    }
+    // // Open Addressing, Insertion and Deletion
+    // for (int probingType = 0; probingType < 3; probingType++) {
+    //     std::cout << "Open Addressing, probing type: " << probingType << "\n";
+    //     for (int size : sizes){
+    //         uint64_t timeInsert = 0;
+    //         uint64_t timeRemove = 0;
+    //         for (int set : dataSets) {
+    //             std::string filename = "./data/zbior_" + std::to_string(set) + "_" + std::to_string(size) + ".txt";
+    //             openAddressing = new OpenAddressing<int, std::string>(probingType, size*2);
+    //             int keyToRemove = populateStructureAndReturnKeyToRemove(openAddressing, filename);
+    //             std::cout << "Open Addressing, probing type: " << probingType << ", size: " << size << ", set: " << set << "\n";
+    //             for (int j = 1; j <= 100; j++){
+    //                 OpenAddressing<int, std::string> *copy = new OpenAddressing<int, std::string>(*openAddressing);
+    //                 std::cout << "OPEN_ADDRESSING | Performing insertion for size: " << size << ", set: " << set;
+    //                 timeInsert += performInsertion(copy, rand()%1000000 + 1, "test");
+    //                 delete copy;
+    //                 OpenAddressing<int, std::string> *copyRemove = new OpenAddressing<int, std::string>(*openAddressing);
+    //                 copyRemove = new OpenAddressing<int, std::string>(*openAddressing);
+    //                 std::cout << "OPEN_ADDRESSING | Performing removal for size: " << size << ", set: " << set;
+    //                 timeRemove += performRemoval(copyRemove, keyToRemove);
+    //                 delete copyRemove;
+    //             }
+    //             delete openAddressing;
+    //         }
+    //         output << "insert;openAddressingProbingType"<< probingType << ";" << size << ";" << timeInsert / 1000 << ";-1\n";
+    //         std::cout << "OPEN_ADDRESSING | Insertion time for probing type " << probingType << " and size " << size << ": " << timeInsert / 1000 << " ns\n";
+    //         output << "remove;openAddressingProbingType"<< probingType << ";" << size << ";" << timeRemove / 1000 << ";-1\n";
+    //         std::cout << "OPEN_ADDRESSING | Removal time for probing type " << probingType << " and size " << size << ": " << timeRemove / 1000 << " ns\n";
+    //     }
+    // }
 
-    // Closed Addressing, Insertion and Deletion
-    for (int size : sizes){
-        uint64_t timeInsert = 0;
-        uint64_t timeRemove = 0;
-        for (int set : dataSets) {
-            std::string filename = "./data/zbior_" + std::to_string(set) + "_" + std::to_string(size) + ".txt";
-            int keyToRemove;
-            std::cout << "Closed Addressing, size: " << size << ", set: " << set << "\n";
-            for (int j = 1; j <= 100; j++){
-                closedAddressing = new ClosedAddressingWithBST<int, std::string>(size*2);
-                keyToRemove = populateStructureAndReturnKeyToRemove(closedAddressing, filename);
-                std::cout << "CLOSED_ADDRESSING | Performing insert for size: " << size << ", set: " << set << "\n";
-                timeInsert += performInsertion(closedAddressing, rand()%1000000 + 1, "test");
-                delete closedAddressing;
-                closedAddressing = new ClosedAddressingWithBST<int, std::string>(size*2);
-                keyToRemove = populateStructureAndReturnKeyToRemove(closedAddressing, filename);
-                std::cout << "CLOSED_ADDRESSING | Performing remove for size: " << size << ", set: " << set << "\n";
-                timeRemove += performRemoval(closedAddressing, keyToRemove);
-                delete closedAddressing;
-            }
-        }
-        output << "insert;closedAddressing;" << size << ";" << timeInsert / 1000 << ";-1\n";
-        std::cout << "CLOSED_ADDRESSING | Insertion time for size " << size << ": " << timeInsert / 1000 << " ns\n";
-        output << "remove;closedAddressing;" << size << ";" << timeRemove / 1000 << ";-1\n";
-        std::cout << "CLOSED_ADDRESSING | Removal time for size " << size << ": " << timeRemove / 1000 << " ns\n";
-    }
+    // // Closed Addressing, Insertion and Deletion
+    // for (int size : sizes){
+    //     uint64_t timeInsert = 0;
+    //     uint64_t timeRemove = 0;
+    //     for (int set : dataSets) {
+    //         std::string filename = "./data/zbior_" + std::to_string(set) + "_" + std::to_string(size) + ".txt";
+    //         int keyToRemove;
+    //         std::cout << "Closed Addressing, size: " << size << ", set: " << set << "\n";
+    //         for (int j = 1; j <= 100; j++){
+    //             closedAddressing = new ClosedAddressingWithBST<int, std::string>(size*2);
+    //             keyToRemove = populateStructureAndReturnKeyToRemove(closedAddressing, filename);
+    //             std::cout << "CLOSED_ADDRESSING | Performing insert for size: " << size << ", set: " << set << "\n";
+    //             timeInsert += performInsertion(closedAddressing, rand()%1000000 + 1, "test");
+    //             delete closedAddressing;
+    //             closedAddressing = new ClosedAddressingWithBST<int, std::string>(size*2);
+    //             keyToRemove = populateStructureAndReturnKeyToRemove(closedAddressing, filename);
+    //             std::cout << "CLOSED_ADDRESSING | Performing remove for size: " << size << ", set: " << set << "\n";
+    //             timeRemove += performRemoval(closedAddressing, keyToRemove);
+    //             delete closedAddressing;
+    //         }
+    //     }
+    //     output << "insert;closedAddressing;" << size << ";" << timeInsert / 1000 << ";-1\n";
+    //     std::cout << "CLOSED_ADDRESSING | Insertion time for size " << size << ": " << timeInsert / 1000 << " ns\n";
+    //     output << "remove;closedAddressing;" << size << ";" << timeRemove / 1000 << ";-1\n";
+    //     std::cout << "CLOSED_ADDRESSING | Removal time for size " << size << ": " << timeRemove / 1000 << " ns\n";
+    // }
 
     // Cuckoo Hashing, Insertion and Deletion
     //TODO: repair cuckoo hashing cycle_overflow error handling

@@ -12,7 +12,7 @@ class CuckooHashing : public HashTable<K, V> {
     size_t size_;
 
     static constexpr K EMPTY_KEY = -1;
-    static constexpr int INSERTION_ATTEMPTS = 50;
+    static constexpr int INSERTION_ATTEMPTS = 10000;
 
     /*
     * First hash function
@@ -20,7 +20,7 @@ class CuckooHashing : public HashTable<K, V> {
     * @return: size_t
     */
     size_t hash1(const K& key) {
-        return key % tableSize;
+        return key*3 % tableSize;
     }
 
     /*
@@ -29,7 +29,7 @@ class CuckooHashing : public HashTable<K, V> {
     * @return: size_t
     */
     size_t hash2(const K& key) {
-        return (key / tableSize) % tableSize;
+        return (key * (key+3)) % tableSize;
     }
 
     /*
@@ -99,9 +99,12 @@ class CuckooHashing : public HashTable<K, V> {
     * @param: V value
     */
     void insert(const K& key, const V& value) override {
+        std::cout << "INSIDE FUNC | Inserting key: " << key << " with value: " << value;
         if (!insertHelper(key, value, 0)) {
+            std::cout << "ERROR | Failed to insert key: " << key << " with value: " << value << std::endl;
             throw std::overflow_error("HashTable is full");
         }
+        std::cout << "SUCCESS | Inserted key: " << key << " with value: " << value << std::endl;
         ++size_;
     }
 

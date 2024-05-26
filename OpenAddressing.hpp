@@ -81,7 +81,7 @@ class OpenAddressing : public HashTable<K, V> {
     void insert(const K& key, const V& value) override {
         int i = 0;
         size_t index;
-        do {
+        while(1) {
             index = hash(key, i);
             if (table[index].first == EMPTY_KEY
                 || table[index].first == DELETED_KEY) {
@@ -90,10 +90,7 @@ class OpenAddressing : public HashTable<K, V> {
                 return;
             }
             ++i;
-            if (i >= tableSize)
-                i %= tableSize;
-        } while (i < tableSize);
-        throw std::overflow_error("HashTable is full");
+        }
     }
 
     /*

@@ -76,17 +76,17 @@ int main() {
             uint64_t timeInsert = 0;
             uint64_t timeRemove = 0;
             for (int set : dataSets) {
-                std::string filename = "./data/zbior_" + std::to_string(set) + "_" + std::to_string(size) + ".txt";
+                std::string filename = "./data1/zbior_" + std::to_string(set) + "_" + std::to_string(size) + ".txt";
                 openAddressing = new OpenAddressing<int, std::string>(probingType, size*2);
                 int keyToRemove = populateStructureAndReturnKeyToRemove(openAddressing, filename);
                 std::cout << "Open Addressing, probing type: " << probingType << ", size: " << size << ", set: " << set << "\n";
                 for (int j = 1; j <= 100; j++){
                     OpenAddressing<int, std::string> *copy = new OpenAddressing<int, std::string>(*openAddressing);
-                    std::cout << "OPEN_ADDRESSING | Performing insertion for size: " << size << ", set: " << set;
+                    std::cout << "OPEN_ADDRESSING | Performing insert for size: " << size << ", set: " << set;
                     timeInsert += performInsertion(copy, rand()%1000000 + 1, "test");
                     delete copy;
                     OpenAddressing<int, std::string> *copyRemove = new OpenAddressing<int, std::string>(*openAddressing);
-                    std::cout << "OPEN_ADDRESSING | Performing removal for size: " << size << ", set: " << set;
+                    std::cout << "OPEN_ADDRESSING | Performing remove for size: " << size << ", set: " << set;
                     timeRemove += performRemoval(copyRemove, keyToRemove);
                     delete copyRemove;
                 }
@@ -104,7 +104,7 @@ int main() {
         uint64_t timeInsert = 0;
         uint64_t timeRemove = 0;
         for (int set : dataSets) {
-            std::string filename = "./data/zbior_" + std::to_string(set) + "_" + std::to_string(size) + ".txt";
+            std::string filename = "./data1/zbior_" + std::to_string(set) + "_" + std::to_string(size) + ".txt";
             int keyToRemove;
             std::cout << "Closed Addressing, size: " << size << ", set: " << set << "\n";
             for (int j = 1; j <= 100; j++){
@@ -131,17 +131,17 @@ int main() {
         uint64_t timeInsert = 0;
         uint64_t timeRemove = 0;
         for (int set : dataSets) {
-            std::string filename = "./data/zbior_" + std::to_string(set) + "_" + std::to_string(size) + ".txt";
+            std::string filename = "./data2/zbior_" + std::to_string(set) + "_" + std::to_string(size) + ".txt";
             std::cout << "Cuckoo Hashing, size: " << size << ", set: " << set << "\n";
             cuckooHashing = new CuckooHashing<int, std::string>(size*2);
             int keyToRemove = populateStructureAndReturnKeyToRemove(cuckooHashing, filename);
             for (int j = 1; j <= 100; j++){
                 CuckooHashing<int, std::string> *copy = new CuckooHashing<int, std::string>(*cuckooHashing);
-                std::cout << "CUCKOO_HASHING | Performing insertion for size: " << size << ", set: " << set;
+                std::cout << "CUCKOO_HASHING | Performing insert for size: " << size << ", set: " << set;
                 timeInsert += performInsertion(copy, rand()%1000000 + 1, "test");
                 delete copy;
                 CuckooHashing<int, std::string> *copyRemove = new CuckooHashing<int, std::string>(*cuckooHashing);
-                std::cout << "CUCKOO_HASHING | Performing removal for size: " << size << ", set: " << set;
+                std::cout << "CUCKOO_HASHING | Performing remove for size: " << size << ", set: " << set;
                 timeRemove += performRemoval(copyRemove, keyToRemove);
                 delete copyRemove;
             }
